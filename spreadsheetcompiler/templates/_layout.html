@@ -1,0 +1,103 @@
+{% set active_page = active_page|default('login') -%}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{ config.TITLE }}</title>
+
+    <!-- Bootstrap core CSS -->
+	<link href="{{ url_for('static', filename='vendor/bootstrap-4.3.1-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <style type="text/css">
+      .fa {
+        width: 20px;
+      }
+    </style>
+  </head>
+  <body>
+  <header>
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a class="navbar-brand">{{ config.TITLE }}</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+          <ul class="navbar-nav mr-auto">
+            {% if current_user.is_authenticated %}
+            {% if current_user.role in ["uploader"] %}
+            <li class="nav-item{% if active_page == "uploader" %} active{% endif %}">
+              <a class="nav-link" href="{{ url_for('uploader.uploader') }}">Uploader view</a>
+            </li>
+            {% endif %}
+            {% if current_user.role in ["compiler"] %}
+            <li class="nav-item{% if active_page == "compiler" %} active{% endif %}">
+              <a class="nav-link" href="{{ url_for('compiler.compiler') }}">Compiler view</a>
+            </li>
+            {% endif %}
+            {% if current_user.role in ["compiler", "manager"] %}
+            <li class="nav-item{% if active_page == "manager" %} active{% endif %}">
+              <a class="nav-link" href="{{ url_for('manager.manager') }}">Manager view</a>
+            </li>
+            {% endif %}
+            {% if current_user.role in ["compiler"] %}
+            <li class="nav-item{% if active_page == "users" %} active{% endif %}">
+              <a class="nav-link" href="{{ url_for('users.users') }}">Users</a>
+            </li>
+            {% endif %}
+            {% endif %}
+          </ul>
+          <ul class="navbar-nav ml-auto">
+            {% if current_user.is_authenticated %}
+            <span class="navbar-text">
+              Logged in as <b>{{ current_user.username }}{% if current_user.usergroup %} ({{ current_user.usergroup.name }}){% endif %}</b>
+            </span>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('users.logout') }}">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item{% if active_page == "login" %} active{% endif %}">
+              <a class="nav-link" href="{{ url_for('users.login') }}">Login</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
+  </header>
+  <div class="container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{% if category != 'message' %}{{ category }}{% else %}danger{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+  </div>
+  <footer class="pt-4 my-md-5 pt-md-5 border-top container">
+    <div class="row">
+      <div class="col-md-12 col-md">
+        <p>{{ config.FOOTER }}</p>
+      </div>
+    </div>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    bsCustomFileInput.init()
+  });
+  $('#confirm-delete').on('show.bs.modal', function(e) {
+      $(this).find('.btn-ok').attr('href', $(e.relatedTarget).attr('href'));
+  });
+  $("select[name=compilation_id]").change(function(e) {
+    $("#select_date_form").submit();
+  });
+</script>
+</body>
+</html>

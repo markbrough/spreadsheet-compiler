@@ -1,0 +1,50 @@
+{% set active_page='users' %}{% extends "_layout.html" %}
+{% block content %}
+<main role="main" class="inner cover">
+<h1 class="cover-heading">{% if user %}Edit user{% else %}Create user{% endif %}</h1>
+<div class="row justify-content-md-center">
+  <div class="col-6">
+    <form method="POST">
+      <div class="form-group row">
+        <label for="role">Role</label>
+        <select class="form-control" name="role" id="role">
+          <option value="uploader"{% if user and user.role=='uploader' %} selected{% endif %}>Uploader</option>
+          <option value="compiler"{% if user and user.role=='compiler' %} selected{% endif %}>Compiler</option>
+          <option value="manager"{% if user and user.role=='manager' %} selected{% endif %}>Manager</option>
+        </select>
+      </div>
+      <div class="form-group row">
+        <label for="username">User Group Name</label>
+        <select class="form-control" name="usergroup_id" id="usergroup_id">
+            <option value="">Select one...</option>
+            {% for usergroup in usergroups %}
+            <option value="{{ usergroup.id }}" {% if user and user.usergroup_id==usergroup.id %} selected{% endif %}>{{ usergroup.name }}</option>
+            {% endfor %}
+        </select>
+        <small id="nameHelp" class="form-text text-muted">If this user is an uploader, this must exactly 
+        match the name of the sheet in the template that this person is contributing to.</small>
+      </div>
+      <div class="form-group row">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username"
+        {% if user %}value="{{ user.username }}"{% endif %}>
+      </div>
+      <div class="form-group row">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        <small id="nameHelp" class="form-text text-muted">If you would like to change this user's password,
+          enter a password above. Otherwise, leave it blank, and it will remain unchanged.</small>
+      </div>
+      <div class="form-group row">
+        <label for="email">Email address</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Email address"
+        {% if user %}value="{{ user.email }}"{% endif %}>
+        <small id="nameHelp" class="form-text text-muted">This email address will be used if the person
+        responsible for submitting data forgets their password.</small>
+      </div>
+      <button type="submit" class="btn btn-primary">{% if user %}Edit user{% else %}Create user{% endif %}</button>
+    </form>
+  </div>
+</div>
+</main>
+{% endblock %}

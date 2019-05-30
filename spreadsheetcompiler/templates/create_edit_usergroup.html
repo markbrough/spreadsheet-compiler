@@ -1,0 +1,20 @@
+{% set active_page='users' %}{% extends "_layout.html" %}
+{% block content %}
+<main role="main" class="inner cover">
+<h1 class="cover-heading">{% if usergroup %}Edit user group{% else %}Create user group{% endif %}</h1>
+<div class="row justify-content-md-center">
+  <div class="col-6">
+    <form method="POST">
+      <div class="form-group row">
+        <label for="name">User Group Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" 
+          {% if usergroup %}value="{{ usergroup.name }}"{% endif %}>
+        <small id="nameHelp" class="form-text text-muted">This must exactly 
+        match the name of the sheet in the template that this group is contributing to.</small>
+      </div>
+      <button type="submit" class="btn btn-primary">{% if usergroup %}Edit user group{% else %}Create user group{% endif %}</button>
+    </form>
+  </div>
+</div>
+</main>
+{% endblock %}

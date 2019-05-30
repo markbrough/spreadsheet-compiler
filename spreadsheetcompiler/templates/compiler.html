@@ -1,0 +1,140 @@
+{% set active_page='compiler' %}{% extends "_layout.html" %}
+{% block content %}
+<main role="main" class="inner cover">
+<h1 class="cover-heading">Review and compile fiscal dashboard data</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h3>Configure template</h3>
+      {% if current_compilation.templatefile %}
+      <p>The current template has the following sheets:</p>
+      <table class="table" id="sheetsTable">
+        <thead class="thead-light">
+          <th>Sheet name</th>
+          <th>Associated uploader</th>
+        </thead>
+        <tbody>
+          {% for sheet in current_compilation.templatefile.sheets %}
+          <tr>
+            <td>{{ sheet.name }}</td>
+            <td>{% if sheet.usergroup %}<span class="badge badge-success">{{ sheet.usergroup.name }}</span>{% else %}&ndash;{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{{ url_for('data.download_template', file_id=current_compilation.templatefile.id) }}" class="btn btn-sm btn-secondary">Download current template <span class="fas fa-download"></span></a>
+      {% else %}
+      <p>There is currently no template. Upload one below.</p>
+      {% endif %}
+      <hr />
+      <h4>Upload new template</h4>
+      <form method="POST" enctype="multipart/form-data" action="{{ url_for('compiler.template_post') }}">
+        <div class="form-group">
+          <div class="custom-file">
+            <input type="file" id="file" placeholder="Select file" name="file"
+            class="custom-file-input">
+            <label for="file" class="custom-file-label">Select file</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="setthisweek" id="radio-nextweek" value="nextweek" checked>
+            <label class="form-check-label" for="radio-nextweek">
+              Use this template next week
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="setthisweek" id="radio-thisweek" value="thisweek">
+            <label class="form-check-label" for="radio-thisweek">
+              Use this template this week
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <h3>Manage and compile inputs</h3>
+      <form id="select_date_form" action="">
+        <div class="form-group row">
+          <label for="compilation_id" class="col-sm-4 col-form-label">Reporting for</label>
+          <div class="col-sm-8">
+            <select class="form-control" name="compilation_id">
+              {% for compilation in compilations %}
+              <option value="{{ compilation.id }}" {% if compilation.id==current_compilation.id %}selected{% endif %}>{{ compilation.final_deadline_text }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </form>
+      </div>
+      <table class="table" id="inputsTable">
+        <thead class="thead-light">
+          <th>User / sheet</th>
+          <th>Draft</th>
+          <th>Final</th>
+        </thead>
+        <tbody>
+          {% for sheet in current_compilation.sheets %}
+          <tr>
+            <td>{{ sheet.name }}</td>
+            <td>
+              {% if sheet.draft %}
+              <a class="btn btn-sm btn-success" 
+              href="{{ url_for('data.download_file', file_id=sheet.file.id) }}">
+              <span class="fa fa-download"></span></a>
+              {% else %}
+              <a class="btn btn-sm btn-danger" href="#"><span class="fa fa-times"></span></a>
+              {% endif %}
+            </td>
+            <td>
+              {% if current_compilation.status == "final" %}
+              {% if sheet.final %}
+              <a class="btn btn-sm btn-success"
+              href="{{ url_for('data.download_file', file_id=sheet.file.id) }}">
+              <span class="fa fa-download"></span></a>
+              {% else %}
+              <a class="btn btn-sm btn-danger" href="#">
+              <span class="fa fa-times"></span></a>
+              {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <hr />
+      {% if current_compilation.supplementary_files %}
+      <table class="table" id="inputsTable">
+        <thead class="thead-light">
+          <th>Uploaded by</th>
+          <th>Name</th>
+          <th>Download</th>
+        </thead>
+        <tbody>
+          {% for file in current_compilation.supplementary_files %}
+          <tr>
+            <td>{{ file.user.usergroup.name }}</td>
+            <td>{{ file.name }} </td>
+            <td>
+              <a class="btn btn-sm btn-success"
+              href="{{ url_for('data.download_file', file_id=file.id) }}">
+              <span class="fa fa-download"></span></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <hr />
+      {% endif %}
+      <div class="text-center">
+        {% if current_compilation.status == "final" %}
+        <p><a href="{{ url_for('compiler.make', compilation_id=current_compilation.id) }}" class="btn btn-success">Download final <span class="fas fa-download"></span></a></p>
+        {% else %}
+        <p><a href="{{ url_for('compiler.make', compilation_id=current_compilation.id) }}" class="btn btn-secondary">Download draft <span class="fas fa-download"></span></a></p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</a>
+</main>
+{% endblock %}

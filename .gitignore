@@ -1,0 +1,14 @@
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+notebooks
+*.ipynb
+pyenv
+__pycache__
+*.pyc
+
+# Don't share specific data
+config.py
+*.xlsx
+*.xls
+*.db

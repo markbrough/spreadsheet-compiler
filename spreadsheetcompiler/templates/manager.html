@@ -1,0 +1,82 @@
+{% set active_page='manager' %}{% extends "_layout.html" %}
+{% block content %}
+<main role="main" class="inner cover">
+<h1 class="cover-heading">Download data</h1>
+<div class="container">
+  <div class="row justify-content-sm-center">
+    <div class="col-lg-6">
+      <form id="select_date_form" action="">
+        <div class="form-group row">
+          <label for="compilation_id" class="col-sm-4 col-form-label">Reporting for</label>
+          <div class="col-sm-8">
+            <select class="form-control" name="compilation_id">
+              {% for a_compilation in compilations %}
+              <option value="{{ a_compilation.id }}" {% if compilation.id==a_compilation.id %}selected{% endif %}>{{ a_compilation.final_deadline.date().isoformat() }}</option>
+              {% else %}
+              <option>No data available</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </form>
+      {% if compilation %}
+      <table class="table">
+        <thead class="thead-light">
+          <th>File</th>
+          <th>Download</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>{{ config.COMPILED_FILE_NAME }} (FINAL)</b></td>
+            <td><a href="{{ url_for('compiler.make', compilation_id=compilation.id) }}" class="btn btn-sm btn-success">
+              <span class="fa fa-download"></span>
+            </a></td>
+          </tr>
+          {% for file in compilation.supplementary_files %}
+          <tr class="text-muted">
+            <td>{{ file.user.usergroup.name }} supplementary file: {{ file.name }}</td>
+            <td><a href="{{ url_for('data.download_file', file_id=file.id) }}"
+              class="btn btn-sm btn-secondary"><span class="fa fa-download"></span></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <hr />
+      <h4>Reporting by department</h4>
+      <p class="lead">Shows whether departments submitted data by the deadline.</p>
+      <table class="table" id="inputsTable">
+        <thead class="thead-light">
+          <th>Department</th>
+          <th>Draft</th>
+          <th>Final</th>
+        </thead>
+        <tbody>
+          {% for sheet in compilation.sheets %}
+          <tr>
+            <td>{{ sheet.name }}</td>
+            <td>
+              {% if sheet.draft %}
+              <a class="btn btn-sm btn-success" href="#"><span class="fa fa-check"></span></button>
+              {% else %}
+              <a class="btn btn-sm btn-danger" href="#"><span class="fa fa-times"></span></button>
+              {% endif %}
+            </td>
+            <td>
+              {% if sheet.final %}
+              <a class="btn btn-sm btn-success" href="#"><span class="fa fa-check"></span></button>
+              {% else %}
+              <a class="btn btn-sm btn-danger" href="#"><span class="fa fa-times"></span></button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="lead">No data available yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+</main>
+{% endblock %}

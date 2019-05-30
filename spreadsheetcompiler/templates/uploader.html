@@ -1,0 +1,95 @@
+{% set active_page='uploader' %}{% extends "_layout.html" %}
+{% block content %}
+<main role="main" class="inner cover">
+<h1 class="cover-heading">Upload data</h1>
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="col-md-6">
+      <h3>Upload a new file</h3>
+      <hr />
+      {% if compilation and compilation.templatefile %}
+      <p class="lead">Submission for {{ compilation.final_deadline_text }} for <b>{{ current_user.usergroup.name }}</b></p>
+      <a href="{{ url_for('data.download_uploader_template') }}" class="btn btn-sm btn-secondary">Download template <span class="fas fa-download"></span></a>
+      <hr />
+      <h4>Upload submission</h4>
+      <form method="POST" enctype="multipart/form-data" action="{{ url_for('uploader.submission_post') }}">
+        <div class="form-group">
+          <div class="custom-file">
+            <input type="file" id="file" placeholder="Select file" name="file"
+            class="custom-file-input">
+            <label for="file" class="custom-file-label">Select file</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </form>
+      <hr />
+      <h4>Upload supplementary file</h4>
+      <form method="POST" enctype="multipart/form-data" action="{{ url_for('uploader.supplementary_post') }}">
+        <div class="form-group">
+          <input type="name" class="form-control" id="name" name="name" placeholder="Name / title of file">
+          <small id="nameHelp" class="form-text text-muted">The name or title of this supplementary file.</small>
+        </div>
+        <div class="form-group">
+          <div class="custom-file">
+            <input type="file" id="file" placeholder="Select file" name="file"
+            class="custom-file-input">
+            <label for="file" class="custom-file-label">Select file</label>
+            <small id="nameHelp" class="form-text text-muted">You can upload multiple 
+            files, and delete existing files, until the submission deadline.</small>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </form>
+      {% else %}
+      <p>No template has been uploaded. Please wait until the compiler uploads a template.</p>
+      {% endif %}
+    </div>
+    <div class="col-md-6">
+      <h3>Uploaded files</h3>
+      <hr />
+      <table class="table">
+        <thead class="thead-light">
+          <th>File</th>
+          <th>Date created</th>
+          <th>Download</th>
+          <th>Delete</th>
+        </thead>
+        <tbody>
+          {% for file in current_user.usergroup.users_uploadedfiles %}
+          <tr>
+            <td>{{ file.name }}</td>
+            <td>{{ file.created_date_formatted }} (by {{ file.user.username }})</td>
+            <td><a href="{{ url_for('data.download_file', file_id=file.id) }}" class="btn btn-sm btn-success"><span class="fas fa-download"></span></a></td>
+            <td><a href="{{ url_for('uploader.delete_file', file_id=file.id) }}" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete"><span class="fas fa-trash"></span></a></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3">No files uploaded yet. Upload a file on the left hand side.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="confirm-delete">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this file?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a class="btn btn-danger btn-ok" href="">Delete file</a>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+{% endblock %}
