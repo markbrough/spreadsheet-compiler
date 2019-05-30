@@ -2,6 +2,22 @@
 
 Allows users from different departments to upload one sheet that is then compiled into a single file. Each department will not be able to see the sheets of other departments. Only managers and compilers can see the full compiled file. It allows data to be uploaded and captured for multiple time periods -- currently once per week.
 
+[Jump straight to Installation instructions below](#installation)
+
+## Rationale
+Excel is great! Very many people can use it, it's cheap and flexible to collect, manage and analyse data. However, combining data from multiple sources on a frequent basis requires a number of steps of human intervention, including:
+
+* ensure various people are working from the same version of the file;
+* sharing files via email;
+* accurately copying data from each source workbook into the target workbook;
+* saving, labelling and safely storing the target workbook;
+* making sure all the people who should have access to this target workbook have access whenever they need it.
+
+The aim of this tool is to simplify this process in a very light-weight way. A template file can be uploaded; users can then upload a sheet of data that will feed into that template. In this case, users don't get to see other users' data. Only those responsible for compiling the final workbook, and managers, can see the final compiled (complete) version.
+
+Eventually, you might want to settle on a more rigid structure, validation, etc., and have the Excel file feed into that data structure (e.g. so that you can compare particular variables over time). However, particularly at the beginning of data collection, it's good to be able to play around with the format or required data and Excel is great at providing this flexibility.
+
+## Detailed explanation
 There are three roles:
 
 * **user**: can upload files contributing to the main template
