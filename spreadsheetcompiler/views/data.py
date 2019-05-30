@@ -37,7 +37,7 @@ def download_template(file_id):
     the_file = models.TemplateFile.query.get(file_id)
     if not the_file: return abort(404)
     attachment_filename = "{} Template {}.xlsx".format(
-        app.config["COMPILED_FILE_NAME"],
+        current_app.config["COMPILED_FILE_NAME"],
         the_file.created_date.date().isoformat())
     return send_file(
         os.path.join(current_app.config['UPLOAD_FOLDER'], "templates", "{}.xlsx".format(the_file.id)),
@@ -54,7 +54,7 @@ def download_uploader_template():
     if not the_file: return abort(404)
     the_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], "templates", "{}.xlsx".format(the_file.id))
     attachment_filename = "{} Template {} {}.xlsx".format(
-        app.config["COMPILED_FILE_NAME"],
+        current_app.config["COMPILED_FILE_NAME"],
         compilation.final_deadline.date().isoformat(),
         current_user.usergroup.name)
     wb = openpyxl.load_workbook(the_file_path)
